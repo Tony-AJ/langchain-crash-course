@@ -1,0 +1,4 @@
+Full result:
+content='81 divided by 9 is **9**.' response_metadata={'prompt_feedback': {'block_reason': 0, 'safety_ratings': []}, 'finish_reason': 'STOP', 'safety_ratings': []} id='run-f609b095-fef1-42fc-8c81-0f81bfe70db4-0' usage_metadata={'input_tokens': 11, 'output_tokens': 10, 'total_tokens': 59}
+Content only:
+81 divided by 9 is **9**.
