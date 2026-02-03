@@ -4,7 +4,7 @@ from langchain.agents import AgentExecutor, create_structured_chat_agent
 from langchain.memory import ConversationBufferMemory
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.tools import Tool
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Load environment variables from .env file
 load_dotenv()
@@ -48,7 +48,7 @@ tools = [
 prompt = hub.pull("hwchase17/structured-chat-agent")
 
 # Initialize a ChatOpenAI model
-llm = ChatOpenAI(model="gpt-4o")
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 
 # Create a structured Chat Agent with Conversation Buffer Memory
 # ConversationBufferMemory stores the conversation history, allowing the agent to maintain context across interactions
@@ -69,10 +69,9 @@ agent_executor = AgentExecutor.from_agent_and_tools(
     handle_parsing_errors=True,  # Handle any parsing errors gracefully
 )
 
-# Initial system message to set the context for the chat
-# SystemMessage is used to define a message from the system to the agent, setting initial instructions or context
-initial_message = "You are an AI assistant that can provide helpful answers using available tools.\nIf you are unable to answer, you can use the following tools: Time and Wikipedia."
-memory.chat_memory.add_message(SystemMessage(content=initial_message))
+# Initial system message is usually part of the prompt pulled from the hub.
+# If you want to add a custom instruction, it can be passed via the prompt/tools or handles.
+# LangChain's structured chat agent prompt already includes system instructions.
 
 # Chat Loop to interact with the user
 while True:
@@ -80,12 +79,7 @@ while True:
     if user_input.lower() == "exit":
         break
 
-    # Add the user's message to the conversation memory
-    memory.chat_memory.add_message(HumanMessage(content=user_input))
 
-    # Invoke the agent with the user input and the current chat history
     response = agent_executor.invoke({"input": user_input})
-    print("Bot:", response["output"])
+    print("Bot:", response["output"], flush=True)
 
-    # Add the agent's response to the conversation memory
-    memory.chat_memory.add_message(AIMessage(content=response["output"]))
